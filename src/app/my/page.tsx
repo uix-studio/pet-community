@@ -32,10 +32,16 @@ export default function MyPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const [nickname, setNickname] = useState("송맘");
-  const [petName] = useState("송이");
+  const [petName, setPetName] = useState("송이");
   const [isEditingNickname, setIsEditingNickname] = useState(false);
   const [nicknameInput, setNicknameInput] = useState(nickname);
   const nicknameRef = useRef<HTMLInputElement>(null);
+
+  const [isEditingPetName, setIsEditingPetName] = useState(false);
+  const [petNameInput, setPetNameInput] = useState(petName);
+  const petNameRef = useRef<HTMLInputElement>(null);
+
+  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
 
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editingDesc, setEditingDesc] = useState("");
@@ -77,6 +83,25 @@ export default function MyPage() {
     setIsEditingNickname(false);
   };
 
+  const startEditingPetName = () => {
+    setPetNameInput(petName);
+    setIsEditingPetName(true);
+    setTimeout(() => petNameRef.current?.focus(), 0);
+  };
+
+  const savePetName = () => {
+    const trimmed = petNameInput.trim();
+    if (trimmed) setPetName(trimmed);
+    setIsEditingPetName(false);
+  };
+
+  const cancelPetName = () => {
+    setPetNameInput(petName);
+    setIsEditingPetName(false);
+  };
+
+  const sortedPosts = sortOrder === "oldest" ? [...posts].reverse() : posts;
+
   const startEditingPost = (post: MyPost) => {
     setEditingPostId(post.id);
     setEditingDesc(post.description);
@@ -116,7 +141,46 @@ export default function MyPage() {
           </div>
 
           <div className="flex-1">
-            <p className="text-body-lg font-bold text-neutral-black-800">{petName}</p>
+            {isEditingPetName ? (
+              <div className="flex items-center gap-1.5">
+                <input
+                  ref={petNameRef}
+                  value={petNameInput}
+                  onChange={(e) => setPetNameInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") savePetName();
+                    if (e.key === "Escape") cancelPetName();
+                  }}
+                  className="w-28 rounded border border-brand px-1.5 py-0.5 text-body-lg font-bold text-neutral-black-800 outline-none focus:ring-1 focus:ring-brand"
+                  maxLength={12}
+                />
+                <button
+                  type="button"
+                  onClick={savePetName}
+                  className="flex h-5 w-5 items-center justify-center rounded-full bg-brand text-white"
+                  aria-label="이름 저장"
+                >
+                  <Check size={12} strokeWidth={2.5} />
+                </button>
+                <button
+                  type="button"
+                  onClick={cancelPetName}
+                  className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-gray-500"
+                  aria-label="이름 편집 취소"
+                >
+                  <X size={12} strokeWidth={2.5} />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={startEditingPetName}
+                className="flex items-center gap-1 text-body-lg font-bold text-neutral-black-800 transition-colors active:text-brand"
+              >
+                {petName}
+                <Pencil size={12} strokeWidth={1.5} className="text-gray-400" />
+              </button>
+            )}
 
             {isEditingNickname ? (
               <div className="mt-0.5 flex items-center gap-1.5">
@@ -233,9 +297,10 @@ export default function MyPage() {
           {!isManaging && (
             <button
               type="button"
-              className="flex items-center gap-1 text-caption text-gray-500"
+              onClick={() => setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))}
+              className="flex items-center gap-1 text-caption text-gray-500 active:text-brand"
             >
-              최신순
+              {sortOrder === "newest" ? "최신순" : "오래된순"}
               <ArrowDownUp size={14} strokeWidth={1.5} />
             </button>
           )}
@@ -257,7 +322,7 @@ export default function MyPage() {
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-0.5" role="list">
-                {posts.map((post) => {
+                {sortedPosts.map((post) => {
                   const isSelected = selectedIds.has(post.id);
                   const isEditing = editingPostId === post.id;
 

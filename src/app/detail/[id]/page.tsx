@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Share2, Heart, Bookmark, MapPin, PawPrint } from "lucide-react";
+import { ArrowLeft, Share2, Heart, MapPin, PawPrint, UserPlus, UserCheck } from "lucide-react";
 import { fetchFeedDetail } from "@/lib/api";
+import { useLikes } from "@/lib/likes-context";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -23,6 +25,10 @@ export default function DetailPage() {
     queryKey: ["feed", id],
     queryFn: () => fetchFeedDetail(id),
   });
+
+  const { isLiked, toggle } = useLikes();
+  const [isFollowing, setIsFollowing] = useState(false);
+  const liked = post ? isLiked(post.id) : false;
 
   return (
     <div className="mx-auto min-h-dvh max-w-mobile bg-white">
@@ -68,13 +74,6 @@ export default function DetailPage() {
                 <button
                   type="button"
                   className="rounded-full bg-black/30 p-2 text-white backdrop-blur-sm"
-                  aria-label="북마크"
-                >
-                  <Bookmark size={20} strokeWidth={2} />
-                </button>
-                <button
-                  type="button"
-                  className="rounded-full bg-black/30 p-2 text-white backdrop-blur-sm"
                   aria-label="공유"
                 >
                   <Share2 size={20} strokeWidth={2} />
@@ -84,14 +83,15 @@ export default function DetailPage() {
               {/* Heart overlay */}
               <button
                 type="button"
-                className={`absolute bottom-4 right-4 rounded-full p-2 backdrop-blur-sm ${
-                  post.likedByMe ? "bg-brand text-white" : "bg-black/30 text-white"
+                onClick={() => toggle(post.id)}
+                className={`absolute bottom-4 right-4 rounded-full p-2 backdrop-blur-sm transition-transform active:scale-110 ${
+                  liked ? "bg-brand text-white" : "bg-black/30 text-white"
                 }`}
-                aria-label={post.likedByMe ? "좋아요 취소" : "좋아요"}
+                aria-label={liked ? "좋아요 취소" : "좋아요"}
               >
                 <Heart
                   size={22}
-                  fill={post.likedByMe ? "currentColor" : "none"}
+                  fill={liked ? "currentColor" : "none"}
                   strokeWidth={2}
                 />
               </button>
@@ -122,7 +122,30 @@ export default function DetailPage() {
               <span className="text-caption text-gray-500">{formatDate(post.createdAt)}</span>
             </div>
             <div className="mt-1 flex items-center justify-between">
-              <span className="text-body-sm text-gray-600">{post.author.nickname}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-body-sm text-gray-600">{post.author.nickname}</span>
+                <button
+                  type="button"
+                  onClick={() => setIsFollowing((prev) => !prev)}
+                  className={`flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors ${
+                    isFollowing
+                      ? "bg-gray-100 text-gray-600"
+                      : "bg-brand text-white"
+                  }`}
+                >
+                  {isFollowing ? (
+                    <>
+                      <UserCheck size={12} strokeWidth={2} />
+                      팔로잉
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus size={12} strokeWidth={2} />
+                      팔로우
+                    </>
+                  )}
+                </button>
+              </div>
               {post.location != null && post.location !== "" && (
                 <span className="flex items-center gap-0.5 text-caption text-gray-500">
                   <MapPin size={12} strokeWidth={1.5} />

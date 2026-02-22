@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, MapPin, Tag, Pencil } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Tag, Pencil } from "lucide-react";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { useUpload } from "@/lib/upload-context";
 
@@ -59,7 +59,8 @@ export default function UploadFormPage() {
     <MobileLayout
       showBottomNav={false}
       headerLeft={
-        <Link href="/upload" className="text-body-sm font-medium text-coolGray-600">
+        <Link href="/upload" className="flex items-center gap-0.5 text-body-sm font-medium text-coolGray-600">
+          <ArrowLeft size={18} strokeWidth={1.8} />
           이전
         </Link>
       }
