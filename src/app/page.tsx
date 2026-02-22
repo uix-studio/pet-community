@@ -34,11 +34,11 @@ export default function HomePage() {
   });
 
   const tabs = (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center">
       <button
         type="button"
         onClick={() => setActiveTab("today")}
-        className={`relative pb-1 text-body-base font-semibold transition-colors ${
+        className={`relative px-2 pb-1 text-body-base font-semibold transition-colors ${
           activeTab === "today" ? "text-brand" : "text-coolGray-600"
         }`}
       >
@@ -50,7 +50,7 @@ export default function HomePage() {
       <button
         type="button"
         onClick={() => setActiveTab("monthly")}
-        className={`relative pb-1 text-body-base font-semibold transition-colors ${
+        className={`relative px-2 pb-1 text-body-base font-semibold transition-colors ${
           activeTab === "monthly" ? "text-brand" : "text-coolGray-600"
         }`}
       >
@@ -75,8 +75,8 @@ export default function HomePage() {
         </Link>
       }
     >
-      {/* Tabs below header — Figma: 360×52 */}
-      <div className="sticky top-12 z-30 flex h-[52px] items-end border-b border-gray-200 bg-white px-4">
+      {/* Tabs below header — Figma: 360×52, 탭 왼쪽 정렬 */}
+      <div className="sticky top-12 z-30 flex h-[52px] items-end bg-white pl-0">
         {tabs}
       </div>
 
@@ -111,7 +111,7 @@ function TodayFeed({ feed }: { feed: ReturnType<typeof useInfiniteQuery<any>> })
   const posts = data?.pages.flatMap((p) => p.data) ?? [];
 
   return (
-    <div className="space-y-3 bg-[#EFEFEF] py-3">
+    <div className="space-y-3 bg-[#EFEFEF] pb-3">
       {isLoading &&
         [1, 2, 3].map((i) => (
           <div key={i}>
