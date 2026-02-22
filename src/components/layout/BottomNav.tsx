@@ -26,7 +26,7 @@ export function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-1/2 z-50 flex w-full max-w-mobile -translate-x-1/2 items-center justify-around border-t border-gray-200 bg-white safe-bottom"
+      className="fixed bottom-0 left-1/2 z-50 flex h-12 w-full max-w-mobile -translate-x-1/2 items-center justify-around border-t border-[#dadada] bg-white safe-bottom"
       role="navigation"
       aria-label="하단 메뉴"
     >
@@ -36,17 +36,17 @@ export function BottomNav() {
           <Link
             key={href}
             href={href}
-            className={`flex w-[72px] flex-col items-center gap-1 py-2 text-caption transition-colors ${
-              active ? "text-brand" : "text-gray-500"
+            className={`flex w-[72px] items-center justify-center py-3 transition-colors ${
+              active ? "text-neutral-black-800" : "text-coolGray-600"
             }`}
             aria-current={active ? "page" : undefined}
+            aria-label={label}
           >
             <Icon
               size={24}
-              strokeWidth={active ? 2.2 : 1.5}
+              strokeWidth={active ? 2 : 1.5}
               fill={active && href === "/like" ? "currentColor" : "none"}
             />
-            <span className="font-medium">{label}</span>
           </Link>
         );
       })}

@@ -38,8 +38,8 @@ export default function HomePage() {
       <button
         type="button"
         onClick={() => setActiveTab("today")}
-        className={`relative pb-1 text-body-base font-bold transition-colors ${
-          activeTab === "today" ? "text-brand" : "text-gray-400"
+        className={`relative pb-1 text-body-base font-semibold transition-colors ${
+          activeTab === "today" ? "text-brand" : "text-coolGray-600"
         }`}
       >
         투데이 멍냥
@@ -50,8 +50,8 @@ export default function HomePage() {
       <button
         type="button"
         onClick={() => setActiveTab("monthly")}
-        className={`relative pb-1 text-body-base font-bold transition-colors ${
-          activeTab === "monthly" ? "text-brand" : "text-gray-400"
+        className={`relative pb-1 text-body-base font-semibold transition-colors ${
+          activeTab === "monthly" ? "text-brand" : "text-coolGray-600"
         }`}
       >
         이달의 멍냥
@@ -109,11 +109,11 @@ function TodayFeed({ feed }: { feed: ReturnType<typeof useInfiniteQuery<any>> })
   const posts = data?.pages.flatMap((p) => p.data) ?? [];
 
   return (
-    <div className="space-y-4 py-4">
+    <div className="space-y-3 bg-[#EFEFEF] py-3">
       {isLoading &&
         [1, 2, 3].map((i) => (
-          <div key={i} className="px-4 py-4">
-            <div className="h-[360px] animate-pulse rounded-xl bg-gray-100" />
+          <div key={i}>
+            <div className="h-[400px] animate-pulse bg-gray-200" />
           </div>
         ))}
 
@@ -125,10 +125,10 @@ function TodayFeed({ feed }: { feed: ReturnType<typeof useInfiniteQuery<any>> })
 
       {posts.map((post: any) => (
         <article key={post.id}>
-          <Link href={`/detail/${post.id}`} className="block px-4">
-            <div className="overflow-hidden rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
-              {/* Image */}
-              <div className="relative aspect-square w-full bg-gray-100">
+          <Link href={`/detail/${post.id}`} className="block">
+            <div className="overflow-hidden bg-white">
+              {/* Image — Figma: 360×400 (9:10) */}
+              <div className="relative aspect-[9/10] w-full bg-gray-100">
                 <Image
                   src={post.images[0]?.url ?? ""}
                   alt={post.pet.name}
@@ -150,29 +150,29 @@ function TodayFeed({ feed }: { feed: ReturnType<typeof useInfiniteQuery<any>> })
                   />
                 </button>
                 {post.images.length > 1 && (
-                  <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+                  <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-[4px]">
                     {post.images.map((_: any, idx: number) => (
                       <div
                         key={idx}
-                        className={`h-1.5 w-1.5 rounded-full ${
-                          idx === 0 ? "bg-white" : "bg-white/50"
+                        className={`h-1.5 w-[15px] rounded-full ${
+                          idx === 0 ? "bg-white/80" : "bg-white/40"
                         }`}
                       />
                     ))}
                   </div>
                 )}
               </div>
-              {/* Card info — py-4 px-3 (16px 위아래, 12px 양옆) */}
+              {/* Card info — Figma: px-12 py-16, 흰색 배경 */}
               <div className="bg-white px-3 py-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-body-sm font-bold text-coolGray-800">{post.pet.name}</span>
-                  <span className="text-caption text-coolGray-800">{formatDate(post.createdAt)}</span>
+                  <span className="text-body-lg font-semibold text-brand">{post.pet.name}</span>
+                  <span className="text-body-sm text-coolGray-800">{formatDate(post.createdAt)}</span>
                 </div>
                 <div className="mt-0.5 flex items-center justify-between">
-                  <span className="text-caption text-coolGray-800">{post.author.nickname}</span>
+                  <span className="text-body-sm text-coolGray-800">{post.author.nickname}</span>
                   {post.location && (
-                    <span className="flex items-center gap-0.5 text-caption text-coolGray-800">
-                      <MapPin size={12} strokeWidth={1.5} />
+                    <span className="flex items-center gap-1 text-caption text-black">
+                      <MapPin size={16} strokeWidth={1.5} />
                       {post.location}
                     </span>
                   )}
