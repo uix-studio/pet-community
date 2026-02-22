@@ -1,14 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Home, Search, PlusCircle, Heart, Bell } from "lucide-react";
+import { Home, Search, PlusCircle, Heart } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
   href: string;
   label: string;
-  icon: LucideIcon;
+  icon: LucideIcon | null;
 }
 
 const navItems: NavItem[] = [
@@ -16,7 +17,7 @@ const navItems: NavItem[] = [
   { href: "/search", label: "검색", icon: Search },
   { href: "/upload", label: "업로드", icon: PlusCircle },
   { href: "/like", label: "좋아요", icon: Heart },
-  { href: "/notifications", label: "알림", icon: Bell },
+  { href: "/my", label: "마이", icon: null },
 ];
 
 export function BottomNav() {
@@ -32,6 +33,23 @@ export function BottomNav() {
     >
       {navItems.map(({ href, label, icon: Icon }) => {
         const active = isActive(href);
+
+        if (!Icon) {
+          return (
+            <Link
+              key={href}
+              href={href}
+              className="flex w-[72px] items-center justify-center py-3"
+              aria-current={active ? "page" : undefined}
+              aria-label={label}
+            >
+              <div className={`h-7 w-7 overflow-hidden rounded-full ${active ? "ring-2 ring-brand" : "ring-1 ring-coolGray-200"}`}>
+                <Image src="/placeholder-1.png" alt="프로필" width={28} height={28} className="object-cover" />
+              </div>
+            </Link>
+          );
+        }
+
         return (
           <Link
             key={href}

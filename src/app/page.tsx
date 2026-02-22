@@ -4,9 +4,10 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import { Heart, MapPin, Crown } from "lucide-react";
+import { Heart, MapPin, Crown, Bell } from "lucide-react";
 import { fetchFeed, fetchRankingMonthly } from "@/lib/api";
 import { MobileLayout } from "@/components/layout/MobileLayout";
+import { useLikes } from "@/lib/likes-context";
 
 type Tab = "today" | "monthly";
 
@@ -68,10 +69,8 @@ export default function HomePage() {
         <Image src="/logo-horizontal.svg" alt="멍냥멍냥" width={106} height={24} priority />
       }
       headerRight={
-        <Link href="/my" className="flex items-center justify-center" aria-label="마이페이지">
-          <div className="h-7 w-7 overflow-hidden rounded-full bg-coolGray-200">
-            <Image src="/placeholder-1.png" alt="프로필" width={28} height={28} className="object-cover" />
-          </div>
+        <Link href="/notifications" className="p-2 text-neutral-black-800" aria-label="알림">
+          <Bell size={24} strokeWidth={1.5} />
         </Link>
       }
     >
@@ -91,6 +90,7 @@ export default function HomePage() {
 
 function TodayFeed({ feed }: { feed: ReturnType<typeof useInfiniteQuery<any>> }) {
   const { data, isLoading, error, fetchNextPage, hasNextPage, isFetchingNextPage } = feed;
+  const { isLiked, toggle } = useLikes();
   const sentinelRef = useRef<HTMLDivElement>(null);
 
   const onSentinel = useCallback(() => {
@@ -140,15 +140,18 @@ function TodayFeed({ feed }: { feed: ReturnType<typeof useInfiniteQuery<any>> })
                 />
                 <button
                   type="button"
-                  className="absolute right-3 top-4 text-white drop-shadow-md"
-                  aria-label={post.likedByMe ? "좋아요 취소" : "좋아요"}
-                  onClick={(e) => e.preventDefault()}
+                  className="absolute right-3 top-4 text-white drop-shadow-md transition-transform active:scale-110"
+                  aria-label={isLiked(post.id) ? "좋아요 취소" : "좋아요"}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    toggle(post.id);
+                  }}
                 >
                   <Heart
                     size={24}
-                    fill={post.likedByMe ? "currentColor" : "none"}
+                    fill={isLiked(post.id) ? "currentColor" : "none"}
                     strokeWidth={1.8}
-                    className={post.likedByMe ? "text-brand" : ""}
+                    className={isLiked(post.id) ? "text-brand" : ""}
                   />
                 </button>
                 {post.images.length > 1 && (
