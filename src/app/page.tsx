@@ -187,7 +187,7 @@ function FeedCard({
         )}
       </div>
 
-      <div className="bg-white px-3 py-3">
+      <div className="bg-white py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-body-lg font-semibold text-brand">{post.pet.name}</span>
@@ -223,9 +223,9 @@ function FeedCard({
         )}
 
         <div className="mt-1.5 flex items-center justify-between">
-          <span className="text-caption text-gray-400">{formatDate(post.createdAt)}</span>
+          <span className="text-caption text-coolGray-600">{formatDate(post.createdAt)}</span>
           {post.location && (
-            <span className="flex items-center gap-1 text-caption text-gray-400">
+            <span className="flex items-center gap-1 text-caption text-coolGray-600">
               <MapPin size={13} strokeWidth={1.5} />
               {post.location}
             </span>
@@ -286,7 +286,7 @@ function MonthlyRanking({ ranking }: { ranking: ReturnType<typeof useQuery<any>>
             </button>
           </div>
 
-          <div className="bg-white px-3 py-3">
+          <div className="bg-white py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-body-lg font-semibold text-brand">{item.post.pet.name}</span>
@@ -305,9 +305,9 @@ function MonthlyRanking({ ranking }: { ranking: ReturnType<typeof useQuery<any>>
               </p>
             )}
             <div className="mt-1.5 flex items-center justify-between">
-              <span className="text-caption text-gray-400">{formatDate(item.post.createdAt)}</span>
+              <span className="text-caption text-coolGray-600">{formatDate(item.post.createdAt)}</span>
               {item.post.location && (
-                <span className="flex items-center gap-1 text-caption text-gray-400">
+                <span className="flex items-center gap-1 text-caption text-coolGray-600">
                   <MapPin size={13} strokeWidth={1.5} />
                   {item.post.location}
                 </span>

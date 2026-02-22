@@ -113,7 +113,7 @@ export default function DetailPage() {
           </div>
 
           {/* Info section */}
-          <div className="px-4 pt-4">
+          <div className="pt-4">
             <div className="flex items-center justify-between">
               <span className="flex items-center gap-1 text-body-base font-bold text-brand">
                 {post.pet.name}
