@@ -3,18 +3,9 @@
 import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowDownUp, Check, Pencil, Trash2, X, Camera, ChevronDown, FolderPlus, Folder, ArrowLeft } from "lucide-react";
+import { SlidersHorizontal, Check, Pencil, Trash2, X, Camera, FolderPlus, Folder, ArrowLeft } from "lucide-react";
 import { MobileLayout } from "@/components/layout/MobileLayout";
 import { Avatar } from "@/components/ui/Avatar";
-
-const BREED_LIST = [
-  "골든 리트리버", "포메라니안", "말티즈", "시바견", "비숑 프리제",
-  "푸들", "치와와", "웰시코기", "프렌치 불독", "보더콜리",
-  "페르시안", "러시안 블루", "브리티시 숏헤어", "스코티시 폴드", "랙돌",
-  "꼬숑 (꼬똥드툴레아+비숑)", "말티푸 (말티즈+푸들)", "폼스키 (포메라니안+허스키)",
-  "코카푸 (코커스패니얼+푸들)", "골든두들 (골든리트리버+푸들)",
-];
-const SORTED_BREEDS = [...BREED_LIST].sort((a, b) => a.localeCompare(b, "ko"));
 
 interface MyPost {
   id: string;
@@ -50,9 +41,6 @@ export default function MyPage() {
   const [contentTab, setContentTab] = useState<ContentTab>("사진");
   const [posts, setPosts] = useState<MyPost[]>(INITIAL_POSTS);
 
-  const [isManaging, setIsManaging] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-
   const [nickname, setNickname] = useState("송맘");
   const [petName, setPetName] = useState("송이");
   const [isProfileEditing, setIsProfileEditing] = useState(false);
@@ -62,50 +50,6 @@ export default function MyPage() {
   const [petNameInput, setPetNameInput] = useState(petName);
 
   const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
-
-  const [petBreed, setPetBreed] = useState("");
-  const [isEditingBreed, setIsEditingBreed] = useState(false);
-  const [breedInput, setBreedInput] = useState("");
-  const [breedSearchInput, setBreedSearchInput] = useState("");
-  const [showBreedDropdown, setShowBreedDropdown] = useState(false);
-  const [isCustomBreed, setIsCustomBreed] = useState(false);
-  const breedRef = useRef<HTMLInputElement>(null);
-
-  const filteredBreeds = breedSearchInput.trim()
-    ? SORTED_BREEDS.filter((b) => b.includes(breedSearchInput.trim()))
-    : SORTED_BREEDS;
-
-  const startEditingBreed = () => {
-    setBreedInput(petBreed);
-    setBreedSearchInput("");
-    setIsEditingBreed(true);
-    setIsCustomBreed(false);
-    setShowBreedDropdown(true);
-    setTimeout(() => breedRef.current?.focus(), 0);
-  };
-
-  const selectBreed = (breed: string) => {
-    setPetBreed(breed);
-    setBreedInput(breed);
-    setIsEditingBreed(false);
-    setShowBreedDropdown(false);
-  };
-
-  const saveBreed = () => {
-    const trimmed = breedInput.trim();
-    if (trimmed) setPetBreed(trimmed);
-    setIsEditingBreed(false);
-    setShowBreedDropdown(false);
-    setIsCustomBreed(false);
-  };
-
-  const cancelBreed = () => {
-    setBreedInput(petBreed);
-    setBreedSearchInput("");
-    setIsEditingBreed(false);
-    setShowBreedDropdown(false);
-    setIsCustomBreed(false);
-  };
 
   const [editingPostId, setEditingPostId] = useState<string | null>(null);
   const [editingDesc, setEditingDesc] = useState("");
@@ -178,21 +122,6 @@ export default function MyPage() {
     ? posts.filter((p) => viewingGroup.postIds.includes(p.id))
     : [];
 
-  const toggleSelect = useCallback((id: string) => {
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }, []);
-
-  const handleDeleteSelected = () => {
-    setPosts((prev) => prev.filter((p) => !selectedIds.has(p.id)));
-    setSelectedIds(new Set());
-    setIsManaging(false);
-  };
-
   const handleDeleteSingle = (id: string) => {
     setPosts((prev) => prev.filter((p) => p.id !== id));
   };
@@ -247,16 +176,7 @@ export default function MyPage() {
       <div className="p-4">
         {/* Profile header */}
         <div className="flex items-center gap-3">
-          <div className="relative">
-            <Avatar src={null} alt={petName} size="lg" />
-            <button
-              type="button"
-              className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-brand text-white shadow-sm"
-              aria-label="프로필 사진 변경"
-            >
-              <Camera size={11} strokeWidth={2} />
-            </button>
-          </div>
+          <Avatar src={null} alt={petName} size="sm" className="h-7 w-7" />
 
           <div className="flex-1">
             {isProfileEditing ? (
@@ -298,73 +218,9 @@ export default function MyPage() {
               </div>
             )}
 
-            {/* 견종 */}
-            {isEditingBreed ? (
-              <div className="relative mt-1">
-                <div className="flex items-center gap-1.5">
-                  {isCustomBreed ? (
-                    <input
-                      ref={breedRef}
-                      value={breedInput}
-                      onChange={(e) => setBreedInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") saveBreed();
-                        if (e.key === "Escape") cancelBreed();
-                      }}
-                      placeholder="견종 직접 입력"
-                      className="w-36 rounded border border-brand px-1.5 py-0.5 text-caption text-gray-700 outline-none focus:ring-1 focus:ring-brand"
-                      maxLength={20}
-                    />
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => setShowBreedDropdown((prev) => !prev)}
-                      className="flex w-36 items-center justify-between rounded border border-brand px-2 py-0.5 text-caption text-gray-700"
-                    >
-                      <span className="truncate">{breedInput || "견종 선택"}</span>
-                      <ChevronDown size={12} strokeWidth={1.5} />
-                    </button>
-                  )}
-                  <button type="button" onClick={saveBreed} className="flex h-5 w-5 items-center justify-center rounded-full bg-brand text-white" aria-label="종류 저장">
-                    <Check size={12} strokeWidth={2.5} />
-                  </button>
-                  <button type="button" onClick={cancelBreed} className="flex h-5 w-5 items-center justify-center rounded-full bg-gray-200 text-gray-500" aria-label="종류 편집 취소">
-                    <X size={12} strokeWidth={2.5} />
-                  </button>
-                </div>
-                {showBreedDropdown && (
-                  <div className="absolute left-0 top-full z-20 mt-1 max-h-40 w-52 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
-                    <div className="border-b border-gray-100 p-2">
-                      <input
-                        value={breedSearchInput}
-                        onChange={(e) => setBreedSearchInput(e.target.value)}
-                        placeholder="견종 검색"
-                        className="w-full rounded border border-gray-200 px-2 py-1 text-caption text-gray-700 outline-none focus:border-brand"
-                      />
-                    </div>
-                    {filteredBreeds.length > 0 ? (
-                      filteredBreeds.map((b) => (
-                        <button key={b} type="button" onClick={() => selectBreed(b)} className="block w-full px-3 py-2 text-left text-caption text-gray-700 hover:bg-gray-50 active:bg-gray-100">
-                          {b}
-                        </button>
-                      ))
-                    ) : (
-                      <button type="button" onClick={() => { setIsCustomBreed(true); setShowBreedDropdown(false); }} className="block w-full border-t border-gray-100 px-3 py-2 text-left text-caption font-medium text-brand">
-                        직접입력
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button type="button" onClick={startEditingBreed} className="mt-1 flex items-center gap-1 text-caption text-gray-400 transition-colors active:text-brand">
-                {petBreed || "견종 등록"}
-                {petBreed ? <Pencil size={10} strokeWidth={1.5} /> : <ChevronDown size={12} strokeWidth={1.5} />}
-              </button>
-            )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center">
             {isProfileEditing ? (
               <>
                 <button type="button" onClick={saveProfile} className="rounded-lg bg-brand px-3 py-1.5 text-body-sm text-white active:bg-brand/90">
@@ -379,25 +235,6 @@ export default function MyPage() {
                 수정
               </button>
             )}
-            <Link href="/my/settings" className="rounded-lg border border-gray-200 px-3 py-1.5 text-body-sm text-gray-600 active:bg-gray-50">
-              계정
-            </Link>
-          </div>
-        </div>
-
-        {/* Stats row */}
-        <div className="mt-4 flex justify-around rounded-xl bg-gray-50 py-3">
-          <div className="text-center">
-            <p className="text-body-base font-bold text-neutral-black-800">{posts.length}</p>
-            <p className="text-caption text-gray-500">게시물</p>
-          </div>
-          <div className="text-center">
-            <p className="text-body-base font-bold text-neutral-black-800">128</p>
-            <p className="text-caption text-gray-500">팔로워</p>
-          </div>
-          <div className="text-center">
-            <p className="text-body-base font-bold text-neutral-black-800">56</p>
-            <p className="text-caption text-gray-500">팔로잉</p>
           </div>
         </div>
 
@@ -413,8 +250,8 @@ export default function MyPage() {
                 setGroupSelectMode(false);
                 setGroupSelectedIds(new Set());
               }}
-              className={`flex-1 pb-2 text-center text-body-sm font-medium transition-colors ${
-                contentTab === tab.value ? "border-b-2 border-brand text-brand" : "text-gray-500"
+              className={`w-[49px] pb-2 text-center text-[14px] font-semibold leading-[18.2px] transition-colors ${
+                contentTab === tab.value ? "border-b-2 border-brand text-brand" : "text-[#2c2c2c]/50"
               }`}
             >
               {tab.label}
@@ -423,45 +260,15 @@ export default function MyPage() {
         </div>
 
         {/* Action bar */}
-        <div className="mt-3 flex items-center justify-between">
+        <div className="mt-3 flex items-center justify-end">
           <button
             type="button"
-            onClick={() => {
-              if (isManaging) {
-                setIsManaging(false);
-                setSelectedIds(new Set());
-              } else {
-                setIsManaging(true);
-              }
-            }}
-            className={`rounded-full px-3 py-1 text-caption font-medium transition-colors ${
-              isManaging ? "bg-brand text-white" : "bg-gray-100 text-gray-600 active:bg-gray-200"
-            }`}
+            onClick={() => setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))}
+            className="flex items-center gap-1 text-[12px] leading-4 text-[#737373] active:text-brand"
           >
-            {isManaging ? "완료" : "관리"}
+            <SlidersHorizontal size={20} strokeWidth={1.8} />
+            {sortOrder === "newest" ? "최신순" : "오래된순"}
           </button>
-
-          {isManaging && selectedIds.size > 0 && (
-            <button
-              type="button"
-              onClick={handleDeleteSelected}
-              className="flex items-center gap-1 rounded-full bg-red-50 px-3 py-1 text-caption font-medium text-red-500 active:bg-red-100"
-            >
-              <Trash2 size={13} strokeWidth={1.8} />
-              삭제 ({selectedIds.size})
-            </button>
-          )}
-
-          {!isManaging && (
-            <button
-              type="button"
-              onClick={() => setSortOrder((prev) => (prev === "newest" ? "oldest" : "newest"))}
-              className="flex items-center gap-1 text-caption text-gray-500 active:text-brand"
-            >
-              {sortOrder === "newest" ? "최신순" : "오래된순"}
-              <ArrowDownUp size={14} strokeWidth={1.5} />
-            </button>
-          )}
         </div>
 
         {/* Photo grid */}
@@ -481,39 +288,11 @@ export default function MyPage() {
             ) : (
               <div className="grid grid-cols-3 gap-1" role="list">
                 {sortedPosts.map((post) => {
-                  const isSelected = selectedIds.has(post.id);
                   const isEditing = editingPostId === post.id;
 
                   return (
                     <div key={post.id} className="group relative" role="listitem">
-                      {/* Manage mode: select overlay */}
-                      {isManaging && (
-                        <button
-                          type="button"
-                          onClick={() => toggleSelect(post.id)}
-                          className="absolute inset-0 z-10"
-                          aria-label={isSelected ? "선택 해제" : "선택"}
-                        >
-                          <div
-                            className={`absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 transition-colors ${
-                              isSelected
-                                ? "border-brand bg-brand text-white"
-                                : "border-white bg-black/20"
-                            }`}
-                          >
-                            {isSelected && <Check size={12} strokeWidth={3} />}
-                          </div>
-                          {isSelected && (
-                            <div className="absolute inset-0 rounded-lg bg-brand/10" />
-                          )}
-                        </button>
-                      )}
-
-                      <div
-                        className={`relative aspect-square overflow-hidden bg-gray-100 ${
-                          isSelected ? "ring-2 ring-brand" : ""
-                        }`}
-                      >
+                      <div className="relative aspect-square overflow-hidden bg-gray-100">
                         <Image
                           src={post.imageUrl}
                           alt={post.description}
@@ -524,7 +303,7 @@ export default function MyPage() {
                       </div>
 
                       {/* Non-manage mode: hover/long-press actions */}
-                      {!isManaging && !isEditing && (
+                      {!isEditing && (
                         <div className="absolute right-1 top-1 opacity-0 transition-opacity group-hover:opacity-100">
                           <button
                             type="button"

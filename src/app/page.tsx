@@ -39,26 +39,24 @@ export default function HomePage() {
       <button
         type="button"
         onClick={() => setActiveTab("today")}
-        className={`relative px-2 pb-1 text-body-base font-semibold transition-colors ${
-          activeTab === "today" ? "text-brand" : "text-coolGray-600"
+        className={`flex h-[39px] w-[89px] items-center justify-center border text-[16px] font-semibold leading-[20.8px] transition-colors ${
+          activeTab === "today"
+            ? "border-brand text-brand"
+            : "border-transparent text-[#8f9dab]"
         }`}
       >
         투데이 멍냥
-        {activeTab === "today" && (
-          <span className="absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-brand" />
-        )}
       </button>
       <button
         type="button"
         onClick={() => setActiveTab("monthly")}
-        className={`relative px-2 pb-1 text-body-base font-semibold transition-colors ${
-          activeTab === "monthly" ? "text-brand" : "text-coolGray-600"
+        className={`flex h-[39px] w-[89px] items-center justify-center border text-[16px] font-semibold leading-[20.8px] transition-colors ${
+          activeTab === "monthly"
+            ? "border-brand text-brand"
+            : "border-transparent text-[#8f9dab]"
         }`}
       >
         이달의 멍냥
-        {activeTab === "monthly" && (
-          <span className="absolute inset-x-0 bottom-0 h-0.5 rounded-full bg-brand" />
-        )}
       </button>
     </div>
   );
@@ -75,7 +73,7 @@ export default function HomePage() {
       }
     >
       {/* Tabs below header — Figma: 360×52, 탭 왼쪽 정렬 */}
-      <div className="sticky top-12 z-30 flex h-[52px] items-end bg-white pl-0">
+      <div className="sticky top-12 z-30 flex h-[52px] items-end bg-white">
         {tabs}
       </div>
 
@@ -187,14 +185,14 @@ function FeedCard({
       <div className="bg-white px-3 py-2.5">
         {/* 1행: 펫이름 / 날짜 */}
         <div className="flex items-center justify-between">
-          <span className="text-body-sm font-bold text-brand">{post.pet.name}</span>
-          <span className="text-caption text-gray-400">{formatDate(post.createdAt)}</span>
+          <span className="text-[18px] font-semibold leading-[23.4px] text-brand">{post.pet.name}</span>
+          <span className="text-[14px] leading-[18.2px] text-[#3d4854]">{formatDate(post.createdAt)}</span>
         </div>
         {/* 2행: 닉네임 / 위치 */}
         <div className="mt-1 flex items-center justify-between">
-          <span className="text-caption text-gray-500">{post.author.nickname}</span>
+          <span className="text-[14px] leading-[18.2px] text-[#3d4854]">{post.author.nickname}</span>
           {post.location && (
-            <span className="flex items-center gap-0.5 text-caption text-gray-500">
+            <span className="flex items-center gap-0.5 text-[12px] leading-6 tracking-[0.5px] text-black">
               <MapPin size={12} strokeWidth={1.5} />
               {post.location}
             </span>
@@ -258,14 +256,14 @@ function MonthlyRanking({ ranking }: { ranking: ReturnType<typeof useQuery<any>>
           <div className="bg-white px-3 py-2.5">
             {/* 1행: 펫이름 / 날짜 */}
             <div className="flex items-center justify-between">
-              <span className="text-body-sm font-bold text-brand">{item.post.pet.name}</span>
-              <span className="text-caption text-gray-400">{formatDate(item.post.createdAt)}</span>
+              <span className="text-[18px] font-semibold leading-[23.4px] text-brand">{item.post.pet.name}</span>
+              <span className="text-[14px] leading-[18.2px] text-[#3d4854]">{formatDate(item.post.createdAt)}</span>
             </div>
             {/* 2행: 닉네임 / 위치 */}
             <div className="mt-1 flex items-center justify-between">
-              <span className="text-caption text-gray-500">{item.post.author.nickname}</span>
+              <span className="text-[14px] leading-[18.2px] text-[#3d4854]">{item.post.author.nickname}</span>
               {item.post.location && (
-                <span className="flex items-center gap-0.5 text-caption text-gray-500">
+                <span className="flex items-center gap-0.5 text-[12px] leading-6 tracking-[0.5px] text-black">
                   <MapPin size={12} strokeWidth={1.5} />
                   {item.post.location}
                 </span>
