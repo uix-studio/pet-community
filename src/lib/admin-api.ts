@@ -130,12 +130,12 @@ export async function fetchAdminPosts(
 }
 
 export async function updatePostStatus(postId: string, status: string): Promise<boolean> {
-  const { error } = await supabase.from("posts").update({ status }).eq("id", postId);
+  const { error } = await (supabase.from("posts") as any).update({ status }).eq("id", postId);
   return !error;
 }
 
 export async function deletePost(postId: string): Promise<boolean> {
-  const { error } = await supabase.from("posts").delete().eq("id", postId);
+  const { error } = await (supabase.from("posts") as any).delete().eq("id", postId);
   return !error;
 }
 
@@ -192,7 +192,7 @@ export async function fetchAdminReports(
 }
 
 export async function updateReportStatus(reportId: string, status: string): Promise<boolean> {
-  const { error } = await supabase.from("reports").update({ status }).eq("id", reportId);
+  const { error } = await (supabase.from("reports") as any).update({ status }).eq("id", reportId);
   return !error;
 }
 
